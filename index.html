@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yours &amp;c.</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Barlow+Condensed:wght@700;900&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link rel="stylesheet" href="styles/base.css">
+<link rel="stylesheet" href="styles/layout.css">
+<link rel="stylesheet" href="styles/library.css">
+<link rel="stylesheet" href="styles/modals.css">
+<link rel="stylesheet" href="styles/visualise.css">
+<link rel="stylesheet" href="styles/vis.css">
+<script type="module" src="js/main.js"></script>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════
+  GLOBAL NAV
+══════════════════════════════════════════════ -->
+<nav class="g-nav">
+  <span class="g-wordmark" onclick="navigate('landing')"><span style="text-transform:uppercase">Yours &amp;</span>c.</span>
+  <div class="g-links">
+    <span class="g-link" id="nav-library"   onclick="navigate('library')">Library</span>
+    <span class="g-link disabled" id="nav-visualise" onclick="navigate('visualise')">Visualise</span>
+    <span class="g-link" id="nav-help"      onclick="navigate('help')">Help</span>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════
+  LANDING VIEW
+══════════════════════════════════════════════ -->
+<div class="view active" id="view-landing">
+  <div class="hero">
+    <div class="hero-h1">Explore<br>Epistolary Fiction</div>
+    <div class="hero-sub">Upload a CSV of correspondence data and explore it through four interactive visualisations — network, flow, mosaic, and sequence.</div>
+    <div style="display:flex;gap:0.75rem;justify-content:center;flex-wrap:wrap">
+      <button class="btn btn-primary" style="font-size:0.85rem;padding:0.75rem 1.75rem;" onclick="navigate('library');openUploadModal()">Add a book</button>
+      <button class="btn btn-ghost" style="font-size:0.85rem;padding:0.75rem 1.75rem;border-color:rgba(255,255,255,0.35);color:rgba(255,255,255,0.7);" onclick="landingVisualise()">Visualise</button>
+    </div>
+  </div>
+  <div class="main">
+    <div class="section-card-title" style="margin-bottom:1.25rem;font-size:1rem;letter-spacing:0.18em;">Four ways to see correspondence</div>
+    <div class="preview-grid">
+      <div class="preview-card" style="cursor:pointer" onclick="landingVisualiseWith('network')">
+        <div class="preview-thumb" id="thumb-network"></div>
+        <div class="preview-name">Network</div>
+        <div class="preview-desc">Characters as nodes. Edge weight shows letter volume between each pair.</div>
+      </div>
+      <div class="preview-card" style="cursor:pointer" onclick="landingVisualiseWith('flow')">
+        <div class="preview-thumb" id="thumb-flow"></div>
+        <div class="preview-name">Flow</div>
+        <div class="preview-desc">Sankey diagram of letters flowing from senders to recipients.</div>
+      </div>
+      <div class="preview-card" style="cursor:pointer" onclick="landingVisualiseWith('grid')">
+        <div class="preview-thumb" id="thumb-grid"></div>
+        <div class="preview-name">Mosaic</div>
+        <div class="preview-desc">Every letter as a coloured square. Left half = sender, right half = recipient.</div>
+      </div>
+      <div class="preview-card" style="cursor:pointer" onclick="landingVisualiseWith('timeline')">
+        <div class="preview-thumb" id="thumb-timeline"></div>
+        <div class="preview-name">Sequence</div>
+        <div class="preview-desc">Letters in sequence, one row per sender. Click to highlight correspondence pairs.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  LIBRARY VIEW
+══════════════════════════════════════════════ -->
+<div class="view" id="view-library">
+  <div class="page-header">
+    <div class="ph-text">
+      <div class="eyebrow">Library</div>
+      <div class="ph-h1">Your Books</div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="lib-toolbar">
+      <div class="lib-count" id="lib-count">0 Books</div>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="btn btn-ghost" onclick="exportLibrary()">Export Library</button>
+        <button class="btn btn-ghost" onclick="importLibraryTrigger()">Import Library</button>
+        <input type="file" id="lib-import-input" accept=".json" style="display:none" onchange="importLibrary(this)">
+      </div>
+    </div>
+    <div class="book-grid" id="book-grid"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  VISUALISE VIEW
+══════════════════════════════════════════════ -->
+<div class="view" id="view-visualise">
+  <div class="page-header" id="vis-header">
+    <div class="ph-text">
+      <div class="eyebrow">Visualise</div>
+      <div class="ph-h1" id="vis-book-title" contenteditable="true" spellcheck="false">—</div>
+      <div class="ph-subtitle" id="vis-book-subtitle"></div>
+    </div>
+    <div class="ph-stats" id="vis-stats">
+      <div style="text-align:right">
+        <div class="ph-stat-num" id="vis-stat-letters">0</div>
+        <div class="ph-stat-label">Letters</div>
+      </div>
+      <div style="text-align:right">
+        <div class="ph-stat-num" id="vis-stat-chars">0</div>
+        <div class="ph-stat-label">Characters</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="vis-layout">
+    <!-- SIDEBAR -->
+    <div class="vis-sidebar">
+      <!-- Book selector -->
+      <div class="sb-book-select">
+        <span class="sb-book-label">Active Book</span>
+        <select class="sb-select" id="sb-book-select" onchange="switchBook(this.value)"></select>
+      </div>
+
+      <!-- Vis tabs -->
+      <div class="vis-tabs">
+        <div class="vis-tab" data-vis="network"  onclick="setActiveVis('network')">Network</div>
+        <div class="vis-tab" data-vis="flow"     onclick="setActiveVis('flow')">Flow</div>
+        <div class="vis-tab" data-vis="grid"     onclick="setActiveVis('grid')">Mosaic</div>
+        <div class="vis-tab" data-vis="timeline" onclick="setActiveVis('timeline')">Sequence</div>
+      </div>
+
+      <!-- Home placeholder msg -->
+      <div class="sb-home-msg" id="sb-home-msg">
+        <div class="sb-home-msg-title">No visualisation selected</div>
+        <div class="sb-home-msg-sub">Choose one of the four options on the right to get started.</div>
+      </div>
+
+      <!-- Mosaic config -->
+      <div class="sb-config" id="sb-config-grid">
+        <div class="sb-section">
+          <span class="sb-section-title">Mosaic Settings</span>
+          <div class="ctrl-row">
+            <span class="ctrl-label">Items / row</span>
+            <div class="slider-wrap"><div class="slider-fill" id="cols-fill" style="width:45%"></div><input type="range" min="5" max="20" value="10" id="cols-slider" oninput="updateColsSlider(this)"></div>
+            <span class="slider-val" id="cols-val">10</span>
+          </div>
+          <div class="ctrl-row">
+            <span class="ctrl-label">Mosaic spacing</span>
+            <div class="slider-wrap"><div class="slider-fill" id="gap-fill" style="width:50%"></div><input type="range" min="0" max="80" value="40" id="gap-slider" oninput="updateGapSlider(this)"></div>
+            <span class="slider-val" id="gap-val">40px</span>
+          </div>
+          <div class="ctrl-row">
+            <span class="ctrl-label">Shape</span>
+            <div class="toggle-group">
+              <button class="toggle-btn active" id="btn-square" onclick="setShape('square')">Square</button>
+              <button class="toggle-btn"        id="btn-circle" onclick="setShape('circle')">Circle</button>
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <span class="ctrl-label">Background</span>
+            <div style="width:20px;height:20px;background:#fff;border:1.5px solid var(--ink);cursor:pointer;position:relative;overflow:hidden;flex-shrink:0">
+              <input type="color" id="bg-color" value="#ffffff" style="position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);opacity:0;cursor:pointer" oninput="setBgColor(this.value)">
+            </div>
+            <span id="bg-hex" style="font-size:0.7rem;color:var(--ink-mid);font-family:monospace">#ffffff</span>
+          </div>
+          <div class="ctrl-row">
+            <span class="ctrl-label">Legend in export</span>
+            <div class="toggle-group">
+              <button class="toggle-btn active" id="btn-leg-no"  onclick="setIncludeLegend(false)">No</button>
+              <button class="toggle-btn"        id="btn-leg-yes" onclick="setIncludeLegend(true)">Yes</button>
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <span class="ctrl-label">PDF resolution</span>
+            <div class="toggle-group">
+              <button class="toggle-btn"        id="btn-dpi-72"  onclick="setPDFDPI(72)">72</button>
+              <button class="toggle-btn active" id="btn-dpi-150" onclick="setPDFDPI(150)">150</button>
+              <button class="toggle-btn"        id="btn-dpi-300" onclick="setPDFDPI(300)">300</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sequence config -->
+      <div class="sb-config" id="sb-config-timeline">
+        <div class="sb-section">
+          <span class="sb-section-title">Sequence Settings</span>
+          <div class="ctrl-row">
+            <span class="ctrl-label">Dot size</span>
+            <div class="slider-wrap"><div class="slider-fill" id="dotr-fill" style="width:40%"></div><input type="range" min="3" max="10" value="5" id="dotr-slider" oninput="updateDotR(this)"></div>
+            <span class="slider-val" id="dotr-val">5px</span>
+          </div>
+          <div class="ctrl-row">
+            <span class="ctrl-label">Row height</span>
+            <div class="slider-wrap"><div class="slider-fill" id="rowh-fill" style="width:40%"></div><input type="range" min="24" max="64" value="40" id="rowh-slider" oninput="updateRowH(this)"></div>
+            <span class="slider-val" id="rowh-val">40px</span>
+          </div>
+        </div>
+        <div class="sb-section">
+          <span class="sb-section-title">Recipient filter</span>
+          <div id="tl-legend-rows" class="tl-legend-rows"></div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:0.6rem" onclick="clearTLSelection()">Clear selection</button>
+        </div>
+      </div>
+
+      <!-- Network config -->
+      <div class="sb-config" id="sb-config-network">
+        <div class="sb-section">
+          <span class="sb-section-title">Network Settings</span>
+          <div class="ctrl-row">
+            <span class="ctrl-label">Layout</span>
+            <div class="toggle-group">
+              <button class="toggle-btn active" id="btn-force"  onclick="setNetLayout('force')">Force</button>
+              <button class="toggle-btn"        id="btn-radial" onclick="setNetLayout('radial')">Radial</button>
+            </div>
+          </div>
+          <div class="ctrl-row">
+            <span class="ctrl-label">Filter</span>
+            <div class="toggle-group">
+              <button class="toggle-btn active" id="btn-net-all"   onclick="setNetFilter('all')">All</button>
+              <button class="toggle-btn"        id="btn-net-major" onclick="setNetFilter('major')">Major only</button>
+            </div>
+          </div>
+        </div>
+        <div class="sb-section">
+          <span class="sb-section-title">Node size scale</span>
+          <div class="net-legend" id="net-size-legend"></div>
+        </div>
+      </div>
+
+      <!-- Flow config -->
+      <div class="sb-config" id="sb-config-flow">
+        <div class="sb-section">
+          <span class="sb-section-title">Flow Settings</span>
+          <div class="field-group">
+            <label class="field-label" for="flow-title-input">Chart title</label>
+            <input class="field-input" type="text" id="flow-title-input" placeholder="Correspondence Flow" oninput="updateFlowTitle(this.value)">
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="resetFlowColors()">↺ Reset colours</button>
+        </div>
+      </div>
+
+      <!-- Character colours disclosure -->
+      <div class="sb-colors-disclosure" id="sb-colors-disclosure" style="display:none">
+        <div class="sb-colors-header" id="sb-colors-header" onclick="toggleColorDisclosure()">
+          <span class="sb-colors-label">Character Colours</span>
+          <span class="sb-colors-arrow">▸</span>
+        </div>
+        <div class="sb-colors-body" id="sb-colors-body"></div>
+        <div class="sb-colors-note">Changes apply to all visualisations. For Name Corrections, use <span style="color:var(--accent);cursor:pointer" onclick="openColorModalForActive()">Edit Colours</span> in the Library.</div>
+      </div>
+
+      <!-- Downloads -->
+      <div class="sb-downloads" id="sb-downloads" style="display:none">
+        <span class="sb-dl-title">Downloads</span>
+        <div class="sb-dl-buttons" id="sb-dl-buttons"></div>
+      </div>
+    </div><!-- /sidebar -->
+
+    <!-- CANVAS AREA -->
+    <div class="vis-canvas-area">
+      <!-- Home state -->
+      <div class="vis-home active" id="vis-home">
+        <div class="home-tab-strip">
+          <div class="home-tab" onclick="setActiveVis('network')">Network</div>
+          <div class="home-tab" onclick="setActiveVis('flow')">Flow</div>
+          <div class="home-tab" onclick="setActiveVis('grid')">Mosaic</div>
+          <div class="home-tab" onclick="setActiveVis('timeline')">Sequence</div>
+        </div>
+        <div class="tile-grid">
+          <div class="vis-tile" onclick="setActiveVis('network')">
+            <div class="tile-thumb" id="tile-thumb-network"></div>
+            <div class="tile-body">
+              <div class="tile-name">Correspondence Network</div>
+              <div class="tile-desc">Characters as nodes sized by total appearances. Edge weight = letter volume between each pair. Force or radial layout. Click a node to highlight connections.</div>
+              <div class="tile-cta">Open Network →</div>
+            </div>
+          </div>
+          <div class="vis-tile" onclick="setActiveVis('flow')">
+            <div class="tile-thumb" id="tile-thumb-flow"></div>
+            <div class="tile-body">
+              <div class="tile-name">Correspondence Flow</div>
+              <div class="tile-desc">A Sankey diagram. Left nodes = senders, right nodes = recipients. Ribbon width = letters sent. Hover or click to highlight individual flows.</div>
+              <div class="tile-cta">Open Flow →</div>
+            </div>
+          </div>
+          <div class="vis-tile" onclick="setActiveVis('grid')">
+            <div class="tile-thumb" id="tile-thumb-grid"></div>
+            <div class="tile-body">
+              <div class="tile-name">Correspondence Mosaic</div>
+              <div class="tile-desc">Every letter as a coloured square. Left half = sender colour, right half = recipient colour. Read left-to-right for the full sequence of correspondence.</div>
+              <div class="tile-cta">Open Mosaic →</div>
+            </div>
+          </div>
+          <div class="vis-tile" onclick="setActiveVis('timeline')">
+            <div class="tile-thumb" id="tile-thumb-timeline"></div>
+            <div class="tile-body">
+              <div class="tile-name">Correspondence Sequence</div>
+              <div class="tile-desc">One row per sender, letters plotted in sequence. Dot colour = recipient. Click any dot to highlight all letters between that pair in both directions.</div>
+              <div class="tile-cta">Open Sequence →</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Network vis -->
+      <div id="vis-network" style="display:none">
+        <div class="section-card" style="padding:1rem 1.25rem">
+          <div class="section-card-title">Correspondence Network</div>
+          <svg id="net-svg"></svg>
+        </div>
+      </div>
+
+      <!-- Flow vis -->
+      <div id="vis-flow" style="display:none">
+        <div class="section-card" style="padding:1rem 1.25rem">
+          <div class="section-card-title">Correspondence Flow</div>
+          <div class="flow-title-label" id="flow-title-display"></div>
+          <div id="flow-wrap"><canvas id="flow-canvas"></canvas></div>
+        </div>
+      </div>
+
+      <!-- Mosaic vis -->
+      <div id="vis-grid" style="display:none">
+        <div class="section-card" id="topic-section" style="display:none">
+          <div class="section-card-title">Topics</div>
+          <div class="topic-cloud" id="topic-cloud"></div>
+          <button class="topic-deselect" onclick="clearActiveTopics()">Deselect all</button>
+        </div>
+        <div class="section-card" id="grid-section">
+          <div class="section-card-title">Correspondence Mosaic</div>
+          <div class="letter-grid" id="letter-grid"></div>
+        </div>
+      </div>
+
+      <!-- Sequence vis -->
+      <div id="vis-timeline" style="display:none">
+        <div class="section-card" style="padding:1rem 1.25rem">
+          <div class="section-card-title">Correspondence Sequence</div>
+          <div class="tl-wrap"><svg id="tl-svg"></svg></div>
+        </div>
+      </div>
+    </div><!-- /canvas -->
+  </div><!-- /vis-layout -->
+</div><!-- /view-visualise -->
+
+<!-- ══════════════════════════════════════════════
+  HELP VIEW
+══════════════════════════════════════════════ -->
+<div class="view" id="view-help">
+  <div class="page-header">
+    <div class="ph-text">
+      <div class="eyebrow">Help</div>
+      <div class="ph-h1">Data Format</div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="help-content">
+      <h2>Quick Start</h2>
+      <p>1. Prepare a CSV file with at minimum three columns: <code>letter_num</code>, <code>from</code>, and <code>to</code>.<br>
+      2. Go to <strong>Library</strong> and click <strong>Add a Book</strong>. Upload your CSV and fill in the book metadata.<br>
+      3. Click <strong>Visualise</strong> on your book card, then select a visualisation.<br>
+      4. Configure the display using the sidebar controls, then click <strong>Download</strong> to export.</p>
+
+      <h2>Required Columns</h2>
+      <table class="help-table">
+        <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>letter_num</td><td>Integer</td><td>Display and sort order. Rows are sorted ascending by this value before rendering.</td></tr>
+          <tr><td>from</td><td>String</td><td>Sender name. Must be consistent — the same character should always appear with the same spelling.</td></tr>
+          <tr><td>to</td><td>String</td><td>Recipient name. Should match the sender's <code>from</code> spelling exactly.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Optional Columns</h2>
+      <table class="help-table">
+        <thead><tr><th>Column</th><th>Type</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>date</td><td>String</td><td>Free-text date. Displayed in tooltips only; not parsed or sorted.</td></tr>
+          <tr><td>topic</td><td>String</td><td>Comma-separated keywords. Enables the Topics tag cloud in the Mosaic visualisation.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Name Corrections</h2>
+      <p>If a recipient name in your CSV doesn't match the sender spelling exactly, use <strong>Name Corrections</strong> in the colour editor modal. Define raw → corrected mappings; they are applied before any visualisation renders and stored with the book record.</p>
+
+      <h2>Library Export &amp; Import</h2>
+      <p>Use <strong>Export Library</strong> in the Library toolbar to download all your books as a JSON file. Use <strong>Import Library</strong> to load it back.</p>
+
+      <h2>Example CSV</h2>
+      <pre style="background:#f8f7f4;border:1px solid var(--border);padding:0.75rem 1rem;font-size:0.78rem;overflow-x:auto;line-height:1.6">letter_num,from,to,date,topic
+1,Cecilia Volanges,Sophia Carnay,"Aug. 3, 17—","friend, dear, write"
+2,Marchioness de Merteuil,Viscount de Valmont,"Aug. 4, 17—","time, woman, letter"</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  UPLOAD MODAL
+══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="upload-modal">
+  <div class="modal">
+    <div class="modal-title">Add a Book</div>
+    <div class="upload-zone" id="upload-zone" onclick="document.getElementById('csv-file-input').click()">
+      <p>Drop a CSV file here, or <span style="color:var(--accent);font-weight:700">click to browse</span></p>
+      <div class="filename" id="upload-filename" style="display:none"></div>
+      <div class="upload-error" id="upload-error" style="display:none"></div>
+    </div>
+    <input type="file" id="csv-file-input" accept=".csv" style="display:none" onchange="handleUploadFile(this)">
+    <div class="field-row" style="margin-bottom:0.75rem">
+      <div class="field-group"><label class="field-label">Book Title</label><input class="field-input" type="text" id="upload-title" placeholder="Title…"></div>
+      <div class="field-group"><label class="field-label">Author</label><input class="field-input" type="text" id="upload-author" placeholder="Author (optional)"></div>
+    </div>
+    <div class="field-group"><label class="field-label">Year <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label><input class="field-input" type="text" id="upload-year" placeholder="e.g. 1782" style="width:120px"></div>
+    <div class="format-hint">Required columns: <code>letter_num</code>, <code>from</code>, <code>to</code> &nbsp;·&nbsp; Optional: <code>date</code>, <code>topic</code> &nbsp;·&nbsp; <span style="color:var(--accent);cursor:pointer" onclick="navigate('help');closeUploadModal()">See Help for full format</span></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeUploadModal()">Cancel</button>
+      <button class="btn btn-primary" id="upload-submit" disabled onclick="submitUpload()">Add to Library</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+  COLOUR EDITOR MODAL
+══════════════════════════════════════════════ -->
+<div class="modal-overlay" id="color-modal">
+  <div class="modal" style="max-width:600px">
+    <div class="modal-title" id="color-modal-title">Edit Character Colours</div>
+    <div style="font-size:0.72rem;color:var(--ink-mid);margin-bottom:0.85rem;line-height:1.5">Click a colour swatch to open the picker. Type a hex value directly. Changes apply immediately to all visualisations for this book.</div>
+    <div class="color-editor-grid" id="ce-grid"></div>
+    <div class="nc-disclosure" id="nc-disclosure">
+      <div class="nc-header" onclick="toggleNCDisclosure()">
+        <span class="nc-header-label">Name Corrections</span>
+        <span class="nc-header-count" id="nc-count"></span>
+      </div>
+      <div class="nc-body" id="nc-body">
+        <div class="nc-hint">If a recipient name in your CSV doesn't match the sender spelling, add a correction here. Applied before any visualisation renders.</div>
+        <div class="nc-rows-header"><span>Raw value in CSV</span><span></span><span>Corrected to</span><span></span></div>
+        <div id="nc-rows"></div>
+        <button class="btn btn-ghost btn-sm" style="margin-top:0.5rem" onclick="addNCRow()">+ Add correction</button>
+      </div>
+    </div>
+    <div class="palette-actions">
+      <button class="btn btn-ghost btn-sm" onclick="importPaletteTrigger()">Import Colour Palette</button>
+      <input type="file" id="palette-import-input" accept=".csv" style="display:none" onchange="importPalette(this)">
+      <button class="btn btn-ghost btn-sm" onclick="exportPalette()">Export Colour Palette</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetColorsToDefault()">Reset to defaults</button>
+    </div>
+    <div class="modal-actions"><button class="btn btn-primary" onclick="closeColorModal()">Done</button></div>
+  </div>
+</div>
+
+<!-- Tooltips -->
+<div class="tooltip" id="grid-tooltip"></div>
+<div class="tooltip" id="tl-tooltip"></div>
+<div class="tooltip" id="net-tooltip">
+  <div id="tt-name"   style="font-weight:700;font-size:0.9rem;display:block;margin-bottom:0.1rem"></div>
+  <div id="tt-detail" style="color:rgba(255,255,255,0.65);font-size:0.78rem"></div>
+</div>
+<div class="tooltip" id="flow-tooltip"></div>
+
+</body>
+</html>

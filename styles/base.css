@@ -1,0 +1,46 @@
+/* ── 1. RESET & TOKENS ─────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#ffffff;--surface:#ffffff;--ink:#0f0f0f;--ink-mid:#555550;
+  --ink-light:#999990;--accent:#e8320a;--accent-dk:#c0280a;--border:#d8d6d0;
+  --grid-bg:#ffffff;--sidebar-w:280px;
+}
+body{background:var(--bg);font-family:'Barlow',system-ui,sans-serif;font-size:15px;color:var(--ink);min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+input,select{font-family:inherit}
+select{background:var(--bg)}
+
+/* ── 2. BUTTONS ─────────────────────────────────────── */
+.btn{
+  font-family:'Barlow',sans-serif;font-size:0.72rem;font-weight:700;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--ink);background:transparent;
+  border:2px solid var(--ink);padding:0.5rem 1rem;transition:background 0.12s,color 0.12s;white-space:nowrap;
+}
+.btn:hover,.btn.active{background:var(--ink);color:#fff}
+.btn-primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn-primary:hover{background:var(--accent-dk);border-color:var(--accent-dk)}
+.btn-ghost{border-color:var(--border);color:var(--ink-mid)}
+.btn-ghost:hover{background:var(--ink-mid);border-color:var(--ink-mid);color:#fff}
+.btn-sm{font-size:0.65rem;padding:0.3rem 0.6rem}
+.btn-wide{width:100%;justify-content:center;display:flex;align-items:center}
+
+/* ── 3. SECTION CARD ────────────────────────────────── */
+.section-card{background:var(--surface);border:1px solid var(--border);padding:1.5rem 2rem;margin-bottom:1.25rem}
+.section-card-title{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.8rem;
+  letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-light);
+  padding-bottom:0.6rem;border-bottom:1px solid var(--border);margin-bottom:1rem;
+}
+
+/* ── 4. TOOLTIPS ────────────────────────────────────── */
+.tooltip{position:fixed;background:var(--ink);color:#fff;font-family:'Barlow',sans-serif;font-size:0.82rem;padding:0.5rem 0.85rem;pointer-events:none;opacity:0;transition:opacity 0.1s;z-index:500;max-width:280px;line-height:1.5}
+.tooltip.visible{opacity:1}
+.tooltip strong{font-weight:700;font-size:0.78rem;letter-spacing:0.06em;text-transform:uppercase;display:block;margin-bottom:0.1rem}
+.tt-route{color:rgba(255,255,255,0.8);display:block;margin-bottom:0.35rem}
+.tt-topics{display:flex;flex-wrap:wrap;gap:3px;margin-top:0.3rem}
+.tt-pill{font-size:0.68rem;font-weight:600;background:rgba(255,255,255,0.15);padding:0.1em 0.4em}
+
+/* ── 5. EMPTY STATES ────────────────────────────────── */
+.empty-state{border:2px dashed var(--border);text-align:center;padding:4rem 2rem;color:var(--ink-mid)}
+.empty-state strong{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.3rem;letter-spacing:0.05em;text-transform:uppercase;color:var(--ink);display:block;margin-bottom:0.5rem}
+.empty-state code{color:var(--accent);font-weight:700}

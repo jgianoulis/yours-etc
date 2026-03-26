@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(wc -l /Users/jen/Documents/Projects/yours-etc/site/yours-etc/js/*.js /Users/jen/Documents/Projects/yours-etc/site/yours-etc/js/vis/*.js)"
+    ]
+  }
+}

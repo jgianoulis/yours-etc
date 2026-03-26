@@ -1,0 +1,72 @@
+/* ── 1. VIEWS (router) ──────────────────────────────── */
+.view{display:none}
+.view.active{display:block}
+
+/* ── 2. GLOBAL NAV ──────────────────────────────────── */
+.g-nav{
+  height:52px;background:var(--bg);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 2.5rem;position:sticky;top:0;z-index:50;
+}
+.g-wordmark{
+  font-family:'Barlow Condensed',sans-serif;font-weight:400;font-size:1.2rem;
+  letter-spacing:0.15em;color:var(--accent);margin-right:auto;
+  cursor:pointer;text-decoration:none;font-style:italic;
+}
+.g-links{display:flex}
+.g-link{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.92rem;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-mid);
+  padding:0 1.2rem;height:52px;display:flex;align-items:center;
+  border-bottom:2px solid transparent;cursor:pointer;text-decoration:none;
+  transition:color 0.12s;
+}
+.g-link:hover{color:var(--ink)}
+.g-link.active{color:var(--ink);border-bottom-color:var(--accent)}
+.g-link.disabled{color:var(--border);pointer-events:none}
+
+/* ── 3. PAGE HEADER BANNER ──────────────────────────── */
+.page-header{
+  background:var(--ink);color:#fff;padding:2rem 2.5rem;
+  display:flex;align-items:flex-end;gap:2rem;flex-wrap:wrap;
+}
+.ph-text{flex:1;min-width:0}
+.eyebrow{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.88rem;
+  letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.35rem;
+}
+.ph-h1{
+  font-family:'Barlow Condensed',sans-serif;font-weight:900;
+  font-size:clamp(2rem,5vw,3.5rem);line-height:0.95;
+  letter-spacing:-0.01em;text-transform:uppercase;color:#fff;
+}
+.ph-h1[contenteditable]{outline:none;border-bottom:2px solid transparent;cursor:text;transition:border-color 0.15s}
+.ph-h1[contenteditable]:hover,.ph-h1[contenteditable]:focus{border-bottom-color:var(--accent)}
+.ph-subtitle{font-size:0.88rem;color:rgba(255,255,255,0.5);margin-top:0.4rem}
+.ph-stats{display:flex;gap:2rem;align-items:flex-end;flex-shrink:0}
+.ph-stat-num{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.5rem;line-height:1;color:var(--accent)}
+.ph-stat-label{font-size:0.65rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.4);margin-top:0.15rem}
+
+/* ── 4. MAIN CONTAINER ──────────────────────────────── */
+.main{max-width:1100px;margin:0 auto;padding:2rem 2.5rem 4rem}
+
+/* ── 5. LANDING VIEW ────────────────────────────────── */
+.hero{background:var(--ink);padding:4rem 2.5rem;text-align:center}
+.hero-eyebrow{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.85rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--accent);margin-bottom:0.75rem}
+.hero-h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(2.5rem,6vw,5rem);line-height:0.92;text-transform:uppercase;color:#fff;margin-bottom:1.25rem}
+.hero-sub{font-size:1rem;color:rgba(255,255,255,0.5);max-width:500px;margin:0 auto 2rem;line-height:1.6}
+.preview-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:1.5rem}
+@media(max-width:900px){.preview-grid{grid-template-columns:repeat(2,1fr)}}
+.preview-card{border:1px solid var(--border);padding:1.25rem}
+.preview-thumb{background:var(--bg);border:1px solid var(--border);height:110px;display:flex;align-items:center;justify-content:center;margin-bottom:0.75rem;overflow:hidden}
+.preview-name{font-family:'Barlow Condensed',sans-serif;font-weight:400;font-size:1.2rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);margin-bottom:0.3rem}
+.preview-desc{font-size:0.9rem;color:var(--ink-mid);line-height:1.5}
+
+/* ── 6. HELP VIEW ───────────────────────────────────── */
+.help-content{max-width:720px}
+.help-content h2{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:1.1rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink);margin:2rem 0 0.75rem}
+.help-content p{font-size:0.9rem;color:var(--ink-mid);line-height:1.7;margin-bottom:0.75rem}
+.help-content code{color:var(--accent);font-weight:700;background:rgba(232,50,10,0.07);padding:0.1em 0.35em;font-family:monospace}
+.help-table{width:100%;border-collapse:collapse;margin-bottom:1.25rem;font-size:0.84rem}
+.help-table th{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-light);text-align:left;padding:0.5rem 0.75rem;border-bottom:2px solid var(--border)}
+.help-table td{padding:0.5rem 0.75rem;border-bottom:1px solid var(--border);color:var(--ink-mid);vertical-align:top}
+.help-table td:first-child{color:var(--ink);font-family:monospace;font-size:0.82rem;color:var(--accent)}

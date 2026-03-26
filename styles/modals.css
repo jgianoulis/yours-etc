@@ -1,0 +1,50 @@
+/* ── SHARED MODAL OVERLAY ───────────────────────────── */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(15,15,15,0.75);
+  display:none;align-items:center;justify-content:center;z-index:200;padding:2rem;
+}
+.modal-overlay.open{display:flex}
+.modal{background:var(--bg);border:1px solid var(--border);width:min(580px,100%);padding:2rem 2.5rem;max-height:90vh;overflow-y:auto}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.82rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--ink-light);padding-bottom:0.75rem;border-bottom:1px solid var(--border);margin-bottom:1.25rem}
+.modal-actions{display:flex;gap:0.6rem;justify-content:flex-end;padding-top:0.75rem;border-top:1px solid var(--border);margin-top:1rem}
+
+/* ── UPLOAD MODAL ───────────────────────────────────── */
+.upload-zone{border:2px dashed var(--border);padding:1.75rem 1.5rem;text-align:center;margin-bottom:1.25rem;cursor:pointer;transition:border-color 0.12s}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--ink)}
+.upload-zone.has-file{border-color:var(--accent);border-style:solid}
+.upload-zone p{font-size:0.82rem;color:var(--ink-mid);line-height:1.5}
+.upload-zone .filename{font-size:0.78rem;color:var(--accent);font-weight:700;margin-top:0.5rem}
+.upload-error{font-size:0.78rem;color:var(--accent);font-weight:600;margin-top:0.35rem}
+.field-group{margin-bottom:0.75rem}
+.field-label{font-size:0.68rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-light);display:block;margin-bottom:0.35rem}
+.field-input{width:100%;border:2px solid var(--border);padding:0.45rem 0.6rem;font-family:'Barlow',sans-serif;font-size:0.82rem;color:var(--ink);background:var(--bg);outline:none;transition:border-color 0.12s}
+.field-input:focus{border-color:var(--ink)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.format-hint{background:#f8f7f4;border:1px solid var(--border);padding:0.6rem 0.75rem;font-size:0.72rem;color:var(--ink-mid);line-height:1.5;margin-bottom:1.25rem}
+.format-hint code{color:var(--accent);font-weight:700}
+
+/* ── COLOUR EDITOR MODAL ────────────────────────────── */
+.color-editor-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0.25rem 2rem}
+.ce-row{display:flex;align-items:center;gap:0.6rem;padding:0.25rem 0}
+.ce-row.active-row{background:rgba(232,50,10,0.04);margin:0 -4px;padding:4px;border:1px solid #f0c4b8}
+.ce-swatch{width:24px;height:24px;border:1.5px solid var(--ink);flex-shrink:0;cursor:pointer;position:relative;overflow:hidden;transition:box-shadow 0.1s}
+.ce-swatch.active-swatch{box-shadow:0 0 0 2px var(--accent)}
+.ce-swatch input[type=color]{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);opacity:0;cursor:pointer;border:none;padding:0}
+.ce-hex{font-family:monospace;font-size:0.72rem;border:1.5px solid var(--border);padding:0.2rem 0.35rem;width:68px;flex-shrink:0;color:var(--ink-mid);outline:none;transition:border-color 0.12s}
+.ce-hex:focus{border-color:var(--ink)}
+.ce-hex.invalid{border-color:var(--accent)}
+.ce-name{font-size:0.75rem;color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.palette-actions{display:flex;gap:0.5rem;flex-wrap:wrap;padding-top:1rem;margin-top:0.75rem;border-top:1px solid var(--border)}
+
+/* ── NAME CORRECTIONS DISCLOSURE ───────────────────── */
+.nc-disclosure{margin-top:1rem;border:1px solid var(--border)}
+.nc-header{padding:0.65rem 0.85rem;display:flex;align-items:center;gap:0.5rem;cursor:pointer;background:#f8f7f4;user-select:none}
+.nc-header-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.72rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-mid)}
+.nc-header-count{font-size:0.68rem;color:var(--ink-light);font-weight:400;text-transform:none;letter-spacing:0}
+.nc-body{padding:0.75rem 0.85rem;border-top:1px solid var(--border);display:none}
+.nc-body.open{display:block}
+.nc-hint{font-size:0.68rem;color:var(--ink-mid);margin-bottom:0.6rem;line-height:1.5}
+.nc-rows-header{display:grid;grid-template-columns:1fr 20px 1fr 28px;gap:0.4rem;margin-bottom:0.35rem}
+.nc-rows-header span{font-size:0.62rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-light)}
+.nc-row{display:grid;grid-template-columns:1fr 20px 1fr 28px;gap:0.35rem 0.5rem;align-items:center;margin-bottom:0.35rem}
+.nc-arrow{color:var(--ink-light);font-size:0.85rem;text-align:center}

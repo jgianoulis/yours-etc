@@ -1,0 +1,119 @@
+/* ── VISUALISE LAYOUT ───────────────────────────────── */
+.vis-layout{display:flex;min-height:calc(100vh - 52px - 180px)}
+.vis-sidebar{
+  width:var(--sidebar-w);flex-shrink:0;border-right:1px solid var(--border);
+  display:flex;flex-direction:column;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;
+}
+.vis-canvas-area{flex:1;min-width:0;padding:1.75rem 2rem;overflow-y:auto}
+
+/* ── SIDEBAR SECTIONS ───────────────────────────────── */
+.sb-book-select{padding:0.7rem 0.85rem;border-bottom:1px solid var(--border)}
+.sb-book-label{font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-light);margin-bottom:0.35rem;font-family:'Barlow Condensed',sans-serif;display:block}
+.sb-select{width:100%;border:1.5px solid var(--border);padding:0.38rem 0.55rem;font-family:'Barlow',sans-serif;font-size:0.8rem;color:var(--ink);background:var(--bg);outline:none}
+.sb-select:focus{border-color:var(--ink)}
+
+/* ── VIS TABS (sidebar) ─────────────────────────────── */
+.vis-tabs{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--border);flex-shrink:0}
+.vis-tab{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.65rem;
+  letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-light);
+  padding:0.65rem 0.1rem;text-align:center;cursor:pointer;border-bottom:3px solid transparent;
+  transition:color 0.12s;
+}
+.vis-tab:hover{color:var(--ink-mid)}
+.vis-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* ── CONFIG PANELS ──────────────────────────────────── */
+.sb-section{padding:0.85rem;border-bottom:1px solid var(--border)}
+.sb-section-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-light);margin-bottom:0.65rem;display:block}
+.sb-config{display:none}
+.sb-config.active{display:block}
+.ctrl-row{display:flex;align-items:center;gap:0.55rem;margin-bottom:0.55rem}
+.ctrl-label{font-size:0.7rem;color:var(--ink-mid);min-width:78px;flex-shrink:0}
+.slider-wrap{flex:1;position:relative;height:3px;background:var(--border)}
+.slider-wrap input[type=range]{position:absolute;inset:-7px 0;width:100%;opacity:0;cursor:pointer;height:17px}
+.slider-fill{height:100%;background:var(--ink);pointer-events:none}
+.slider-val{font-size:0.7rem;font-weight:700;color:var(--ink);min-width:2.2rem;text-align:right}
+.toggle-group{display:flex}
+.toggle-btn{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.65rem;
+  letter-spacing:0.1em;text-transform:uppercase;border:1.5px solid var(--border);
+  padding:0.28rem 0.65rem;color:var(--ink-mid);background:transparent;cursor:pointer;
+  margin-right:-1.5px;transition:all 0.1s;
+}
+.toggle-btn:hover{border-color:var(--ink-mid);color:var(--ink)}
+.toggle-btn.active{background:var(--ink);border-color:var(--ink);color:#fff}
+
+/* ── SIDEBAR HOME PLACEHOLDER ───────────────────────── */
+.sb-home-msg{padding:1.5rem 1rem;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:0.5rem}
+.sb-home-msg-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-light)}
+.sb-home-msg-sub{font-size:0.72rem;color:var(--ink-light);line-height:1.5}
+
+/* ── CHARACTER COLOURS DISCLOSURE ───────────────────── */
+.sb-colors-disclosure{border-bottom:1px solid var(--border)}
+.sb-colors-header{
+  padding:0.65rem 0.85rem;display:flex;align-items:center;gap:0.4rem;cursor:pointer;user-select:none;
+  border-left:3px solid transparent;transition:border-color 0.12s;
+}
+.sb-colors-header.open{border-left-color:var(--accent)}
+.sb-colors-label{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-mid);flex:1}
+.sb-colors-header.open .sb-colors-label{color:var(--accent)}
+.sb-colors-arrow{font-size:0.6rem;color:var(--ink-light);transition:transform 0.15s}
+.sb-colors-header.open .sb-colors-arrow{transform:rotate(90deg)}
+.sb-colors-body{display:none;max-height:280px;overflow-y:auto;padding:0.4rem 0.85rem}
+.sb-colors-body.open{display:block}
+.sb-color-row{display:flex;align-items:center;gap:0.45rem;padding:0.22rem 0;border-bottom:1px solid rgba(216,214,208,0.35)}
+.sb-color-row:last-child{border-bottom:none}
+.sb-swatch{width:16px;height:16px;border:1.5px solid rgba(0,0,0,0.15);flex-shrink:0;cursor:pointer;position:relative;overflow:hidden}
+.sb-swatch input[type=color]{position:absolute;inset:-4px;width:calc(100%+8px);height:calc(100%+8px);opacity:0;cursor:pointer;border:none;padding:0}
+.sb-hex{font-family:monospace;font-size:0.65rem;color:var(--ink-mid);border:1px solid var(--border);padding:0.1rem 0.25rem;width:56px;flex-shrink:0;outline:none}
+.sb-hex.invalid{border-color:var(--accent)}
+.sb-char{font-size:0.7rem;color:var(--ink);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-colors-note{font-size:0.62rem;color:var(--ink-light);padding:0.4rem 0.85rem 0.65rem;line-height:1.4;border-bottom:1px solid var(--border)}
+
+/* ── DOWNLOADS ──────────────────────────────────────── */
+.sb-downloads{padding:0.85rem;margin-top:auto;border-top:1px solid var(--border)}
+.sb-dl-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.65rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-light);margin-bottom:0.5rem;display:block}
+.sb-dl-buttons{display:flex;flex-direction:column;gap:0.4rem}
+
+/* ── NETWORK LEGEND IN SIDEBAR ──────────────────────── */
+.net-legend{padding:0.5rem 0}
+.net-legend-row{display:flex;align-items:center;gap:0.55rem;padding:0.2rem 0;font-size:0.7rem;color:var(--ink-mid)}
+.net-dot{border-radius:50%;flex-shrink:0;border:1.5px solid rgba(0,0,0,0.1)}
+
+/* ── SEQUENCE LEGEND IN SIDEBAR ─────────────────────── */
+.tl-legend-rows{max-height:200px;overflow-y:auto}
+.tl-leg-item{display:flex;align-items:center;gap:0.5rem;cursor:pointer;border-radius:2px;padding:0.15rem 0.3rem}
+.tl-leg-item:hover{background:rgba(0,0,0,0.04)}
+.tl-leg-item.active{background:rgba(232,50,10,0.06)}
+.tl-leg-item.dimmed{opacity:0.35}
+.tl-leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.tl-leg-name{font-size:0.7rem;color:var(--ink-mid)}
+
+/* ── ROW ORDER DRAG LIST ────────────────────────────── */
+.row-order-list{font-size:0.72rem;color:var(--ink-mid)}
+.row-order-item{display:flex;align-items:center;gap:0.5rem;padding:0.18rem 0;cursor:grab}
+.row-order-item:active{cursor:grabbing}
+.drag-handle{color:var(--border);font-size:0.85rem;user-select:none}
+
+/* ── VISUALISE HOME STATE ───────────────────────────── */
+.vis-home{display:none}
+.vis-home.active{display:block}
+.home-tab-strip{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:2px solid var(--border);margin-bottom:1.5rem}
+.home-tab{
+  font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:0.78rem;
+  letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-light);
+  padding:0.85rem 0;text-align:center;cursor:pointer;border-bottom:3px solid transparent;
+  margin-bottom:-2px;transition:color 0.12s;
+}
+.home-tab:hover{color:var(--ink)}
+
+/* ── TILE GRID ──────────────────────────────────────── */
+.tile-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+.vis-tile{border:1px solid var(--border);overflow:hidden;cursor:pointer;transition:border-color 0.15s}
+.vis-tile:hover{border-color:var(--ink-mid)}
+.tile-thumb{height:150px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;background:#f8f7f4;overflow:hidden;padding:1rem}
+.tile-body{padding:0.9rem 1.1rem}
+.tile-name{font-family:'Barlow Condensed',sans-serif;font-weight:400;font-size:1.2rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--ink);margin-bottom:0.3rem}
+.tile-desc{font-size:0.9rem;color:var(--ink-mid);line-height:1.5}
+.tile-cta{font-family:'Barlow Condensed',sans-serif;font-weight:400;font-size:0.82rem;letter-spacing:0.12em;text-transform:uppercase;color:var(--accent);margin-top:0.5rem}
